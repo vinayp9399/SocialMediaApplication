@@ -2,6 +2,14 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const prisma = require("../config/db");
 
+// Centralized cookie configuration so login, signup, and logout are identical
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  secure: process.env.NODE_ENV === "production" ? true : false
+};
+
 const signup = async (req, res) => {
   const { email, password, username } = req.body;
   if (!email || !password || !username) {
@@ -25,12 +33,8 @@ const signup = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-    res.cookie("token", token, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      secure: process.env.NODE_ENV === "production" ? true : false
-    });
+    
+    res.cookie("token", token, COOKIE_OPTIONS);
     res.status(201).json({ user });
   } catch (err) {
     res.status(500).json({ message: "Signup failed.", error: err.message });
@@ -43,7 +47,8 @@ const login = async (req, res) => {
     return res.status(400).json({ message: "All fields are required." });
   }
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
+    // Changed to findFirst to avoid strict @unique schema constraints crashing the runtime
+    const user = await prisma.user.findFirst({ where: { email } });
     if (!user) return res.status(404).json({ message: "User does not exist." });
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -54,11 +59,9 @@ const login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-    res.cookie("token", token, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: "lax",
-    });
+
+    // FIXED: Now using the exact cross-origin cookie properties required by the browser
+    res.cookie("token", token, COOKIE_OPTIONS);
     res.json({ user: { id: user.id, email: user.email, username: user.username } });
   } catch (err) {
     res.status(500).json({ message: "Login failed.", error: err.message });
@@ -66,7 +69,8 @@ const login = async (req, res) => {
 };
 
 const logout = (req, res) => {
-  res.clearCookie("token");
+  // FIXED: Clearing cookies cross-origin requires passing the exact same option flags
+  res.clearCookie("token", COOKIE_OPTIONS);
   res.json({ message: "Logged out." });
 };
 
