@@ -5,9 +5,9 @@ const prisma = require("../config/db");
 // Centralized cookie configuration so login, signup, and logout are identical
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  secure: process.env.NODE_ENV === "production" ? true : false
+  maxAge: 7 * 24 * 60 * 60 * 1000, 
+  sameSite: "none", // Force this to be lowercase "none" string
+  secure: true,     // Force this to be true for HTTPS
 };
 
 const signup = async (req, res) => {
