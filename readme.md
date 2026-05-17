@@ -234,15 +234,4 @@ npm run dev
 
 ---
 
-## Environment Variables
-
-### Backend `.env`
-```
-DATABASE_URL="postgresql://user:password@localhost:5432/nexusdb"
-JWT_SECRET="your_secret_key"
-PORT=5000
-```
-
----
-
 *Built with Next.js 14, Express, PostgreSQL, and Prisma.*
