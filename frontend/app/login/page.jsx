@@ -23,7 +23,8 @@ function LoginForm() {
     setSubmitting(false);
     if (result.success) {
       const redirect = searchParams.get("redirect") || "/";
-      router.push(redirect);
+      // Changed to hard window navigation so headers clear middleware instantly
+      window.location.href = redirect;
     } else {
       setError(result.message);
     }
@@ -95,4 +96,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
