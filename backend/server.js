@@ -25,8 +25,8 @@ app.use(cors({
   credentials: true 
 }));
 
-app.use(express.json());
 app.use(cookieParser());
+app.use(express.json());
 
 // Route Registrations
 app.use("/auth",        require("./routes/auth"));
