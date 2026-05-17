@@ -28,8 +28,8 @@ const signup = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production", // Crucial for production HTTPS
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production" ? true : false
     });
     res.status(201).json({ user });
   } catch (err) {
