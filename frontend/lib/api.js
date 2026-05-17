@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://socialmediaapplication-otsl.onrender.com",
+  baseURL: "/api",
   withCredentials: true, // sends cookie automatically
 });
 
