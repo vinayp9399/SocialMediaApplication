@@ -1,25 +1,24 @@
 "use client";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FileText, ImageIcon, Link2, X, ArrowLeft, Loader2 } from "lucide-react";
-import { usePosts }       from "../../context/PostsContext";
-import { useCommunities } from "../../context/CommunitiesContext";
-import { useAuth }        from "../../context/AuthContext";
-import { Navbar } from "../../components/layout/Navbar";
+import { usePosts }       from "@/context/PostsContext";
+import { useCommunities } from "@/context/CommunitiesContext";
+import { useAuth }        from "@/context/AuthContext";
 
-export default function SubmitPage() {
+function SubmitForm() {
   const router       = useRouter();
   const searchParams = useSearchParams();
   const { user }     = useAuth();
   const { addPost }  = usePosts();
   const { communities } = useCommunities();
 
-  const [postType, setPostType] = useState("text");
-  const [community, setCommunity] = useState(searchParams.get("community") || "");
-  const [title, setTitle]         = useState("");
-  const [content, setContent]     = useState("");
-  const [url, setUrl]             = useState("");
-  const [image, setImage]         = useState(null);
+  const [postType, setPostType]     = useState("text");
+  const [community, setCommunity]   = useState(searchParams.get("community") || "");
+  const [title, setTitle]           = useState("");
+  const [content, setContent]       = useState("");
+  const [url, setUrl]               = useState("");
+  const [image, setImage]           = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError]           = useState("");
 
@@ -38,20 +37,16 @@ export default function SubmitPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!canSubmit || !user) return;
-
     const selected = communities.find((c) => c.slug === community);
     if (!selected) return;
-
     setSubmitting(true);
     setError("");
-
     const result = await addPost({
       title:       title.trim(),
       content:     postType === "text" ? content.trim() : url.trim(),
       communityId: selected.id,
       imageUrl:    postType === "image" ? image : null,
     });
-
     setSubmitting(false);
     if (result.success) router.push(`/r/${community}`);
     else setError(result.message);
@@ -65,8 +60,6 @@ export default function SubmitPage() {
 
   return (
     <>
-    <Navbar />
-    <div className="max-w-2xl mx-auto px-4 lg:px-8 py-10">
       <button onClick={() => router.back()} className="inline-flex items-center gap-1.5 text-xs text-ink-500 hover:text-ink-200 mb-6 transition-colors">
         <ArrowLeft size={13} /> Back
       </button>
@@ -174,7 +167,16 @@ export default function SubmitPage() {
           </button>
         </div>
       </form>
-    </div>
     </>
+  );
+}
+
+export default function SubmitPage() {
+  return (
+    <div className="max-w-2xl mx-auto px-4 lg:px-8 py-10">
+      <Suspense fallback={<div className="h-96 skeleton rounded-8" />}>
+        <SubmitForm />
+      </Suspense>
+    </div>
   );
 }
