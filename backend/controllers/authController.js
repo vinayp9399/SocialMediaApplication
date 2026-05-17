@@ -29,6 +29,7 @@ const signup = async (req, res) => {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
       sameSite: "lax",
+      secure: process.env.NODE_ENV === "production", // Crucial for production HTTPS
     });
     res.status(201).json({ user });
   } catch (err) {
