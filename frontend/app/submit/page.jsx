@@ -2,9 +2,9 @@
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FileText, ImageIcon, Link2, X, ArrowLeft, Loader2 } from "lucide-react";
-import { usePosts }       from "@/context/PostsContext";
-import { useCommunities } from "@/context/CommunitiesContext";
-import { useAuth }        from "@/context/AuthContext";
+import { usePosts }       from "../../context/PostsContext";
+import { useCommunities } from "../../context/CommunitiesContext";
+import { useAuth }        from "../../context/AuthContext";
 
 function SubmitForm() {
   const router       = useRouter();
