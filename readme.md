@@ -4,6 +4,8 @@
 
 ---
 
+Live project Link- https://social-media-application-wi9u.vercel.app/
+
 ## Introduction
 
 Nexus is a full-stack web application that replicates and improves upon the core experience of community-driven platforms like Reddit. It allows users to create accounts, build and join communities, publish posts, vote on content, and engage in threaded discussions — all wrapped in a clean, professional dark-themed interface.
